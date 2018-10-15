@@ -1,7 +1,7 @@
 
 public class Buffer {
-    String myBuf;
-    Boolean flag;
+    private String myBuf;
+    private Boolean flag;
 
     Buffer(){
         flag=false;
