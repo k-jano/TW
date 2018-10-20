@@ -11,7 +11,7 @@ public class myBuffer {
         semC.increment();
     }
 
-    public synchronized String take(){
+    public String take(){
         semC.decrement();
         String toReturn = this.myBuf;
         semP.increment();
