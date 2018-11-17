@@ -42,7 +42,7 @@ class BoundedBuffer {
             items[putptr] = x;
             if (++putptr == items.length) putptr = 0;
             ++count;
-            toProcess.signal();
+            toProcess.signalAll();
         } finally {
             lock.unlock();
         }
