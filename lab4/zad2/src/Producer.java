@@ -17,7 +17,8 @@ public class Producer implements Runnable{
     public void run() {
         int globalCounter= 0;
         int globalRand = 0;
-        while (true) {
+        //while (true) {
+        for(int j=0; j<10; j++){
             //myBuf.put("from "+id+ " message "+i);
             try{
                 Random generator = new Random();
@@ -30,7 +31,8 @@ public class Producer implements Runnable{
                 long startTime = System.nanoTime();
                 myBoundedBuffer.put(toBuffer, rand);
                 long estimatedTime = System.nanoTime() - startTime;
-                System.out.println("Producer " + id + " : " + estimatedTime + " ns");
+                //System.out.println("Producer " + id + " : " + estimatedTime + " ns");
+                //System.out.println(estimatedTime);
             }catch (InterruptedException e){
                 System.out.println(e);
             }
@@ -42,11 +44,13 @@ public class Producer implements Runnable{
 
 
             //Sleeping helps analize results
+            /*
             try{
                 Thread.sleep(3000);
             }catch (InterruptedException ex){
                 System.out.println("Err in sleep");
             }
+            */
 
 
         }
