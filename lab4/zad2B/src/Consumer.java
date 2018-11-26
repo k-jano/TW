@@ -27,7 +27,7 @@ public class Consumer implements Runnable{
                 LinkedList<Object> list = myBoundedBuffer.take(rand);
                 long estimatedTime = System.nanoTime() - startTime;
                 //System.out.println("Consumer " + id + " : " + estimatedTime + " ns");
-                //System.out.println(estimatedTime);
+                System.out.println(estimatedTime);
                 for(int i=0; i<rand; i++) {
                     //System.out.println("Consumer " + id + " : " + list.get(i));
                 }

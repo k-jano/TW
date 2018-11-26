@@ -5,10 +5,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 class BoundedBuffer {
     private final Lock lock = new ReentrantLock();
-    private final Condition notFull  = lock.newCondition();
-    private final Condition notEmpty = lock.newCondition();
-    private final Condition pWaiting = lock.newCondition();
-    private final Condition cWaiting = lock.newCondition();
+    private final Condition majorityProducers  = lock.newCondition();
+    private final Condition majorityConsumers = lock.newCondition();
+    private final Condition oneProducer = lock.newCondition();
+    private final Condition oneConsumer = lock.newCondition();
+    private boolean anyConsumerWaits = false;
+    private boolean anyProducerWaits = false;
 
     private Object[] items;
     private int putptr, takeptr, count;
@@ -22,21 +24,23 @@ class BoundedBuffer {
     void put(LinkedList<String> x, int size) throws InterruptedException {
         lock.lock();
         try {
-            //Naive Way
+            //Justice way
 
-            while (count >= items.length)
-                notFull.await();
+            if(anyProducerWaits)
+                majorityProducers.await();
 
+            anyProducerWaits=true;
             while (count >= items.length-size)
-                pWaiting.await();
+                oneProducer.await();
 
             for(int i=0; i<size; i++){
                 items[putptr]= x.get(i);
                 if (++putptr == items.length) putptr = 0;
                 ++count;
             }
-            cWaiting.signalAll();
-            notEmpty.signal();
+            anyProducerWaits=false;
+            majorityProducers.signalAll();
+            oneConsumer.signalAll();
 
         } finally {
             lock.unlock();
@@ -48,11 +52,13 @@ class BoundedBuffer {
         try {
 
             //Naive way
-            while (count < 0)
-                notEmpty.await();
+            while (anyConsumerWaits)
+                majorityConsumers.await();
+
+            anyConsumerWaits=true;
 
             while (count - size < 0)
-                cWaiting.await();
+                oneConsumer.await();
 
             LinkedList<Object> toReturn = new LinkedList<>();
             for(int i=0; i<size; i++) {
@@ -60,8 +66,10 @@ class BoundedBuffer {
                 if (++takeptr == items.length) takeptr = 0;
                 --count;
             }
-            pWaiting.signalAll();
-            notFull.signalAll();
+            anyConsumerWaits=false;
+            majorityConsumers.signalAll();
+            oneProducer.signalAll();
+
             return toReturn;
 
         } finally {
