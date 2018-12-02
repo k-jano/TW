@@ -1,0 +1,10 @@
+{
+  "name": "zad1",
+  "description": "...",
+  "author": "...",
+  "dependencies": {
+    "q": "1.x",
+    "async": "0.2.x"
+  },
+  "engine": "node >= 0.10.1"
+}

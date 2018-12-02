@@ -9,15 +9,21 @@ import javax.swing.JFrame;
 
 public class Mandelbrot extends JFrame {
 
-    int threadCounter = 2;
+    int threadCounter = 8;
     private ExecutorService executorService = Executors.newFixedThreadPool(threadCounter);
     private Set<Future<Part>> set = new HashSet<>();
     private final int MAX_ITER = 570;
     private final double ZOOM = 150;
     private BufferedImage I;
     private double zx, zy, cX, cY, tmp;
-    private int HeightCount = 600/threadCounter;
-    private int WidthCount = 800/threadCounter;
+    //private int HeightCount = 600/threadCounter;
+    //private int WidthCount = 800/threadCounter;
+    //private int taskCounter=10;
+    //private int HeightCount = 600/threadCounter/taskCounter;
+    //private int WidthCount =800/threadCounter/taskCounter;
+    private int HeightCount=600;
+    private int WidthCount=800;
+
 
     public Mandelbrot() throws InterruptedException, ExecutionException{
         super("Mandelbrot Set");
@@ -59,7 +65,10 @@ public class Mandelbrot extends JFrame {
 
     public static void main(String[] args) {
         try{
-            new Mandelbrot().setVisible(true);
+            for(int i=0; i<10; i++){
+                new Mandelbrot();
+            }
+            //new Mandelbrot().setVisible(true);
         } catch (ExecutionException | InterruptedException e){
             e.printStackTrace();
         }

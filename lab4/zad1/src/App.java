@@ -5,8 +5,8 @@ import java.util.LinkedList;
 public class App {
     public static void main (String[] args){
 
-        int ProducerCount = 1;
-        int ConsumerCount = 1;
+        int ProducerCount = 2;
+        int ConsumerCount = 2;
         int ProcessingProcCount = 5;
 
         BoundedBuffer myBoundedBuffer =  new BoundedBuffer(ProcessingProcCount);
