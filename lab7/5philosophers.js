@@ -4,17 +4,13 @@ var Fork = function() {
     return this;
 }
 
-function waiting(timetoWait, cb){
-    console.log("HI")
-    setTimeout(function(){cb()}, timetoWait);
-}
-
 Fork.prototype.acquire = function(time,cb) {
     if(this.state==0){
         this.state=1;
-        console.log("State changed");
+        //console.log("State changed");
+        cb();
     } else{
-        console.log("Waiting "+ time);
+        //console.log("Waiting "+ time);
         setTimeout(()=>{this.acquire(time*2,cb);} , time);
     }
     // zaimplementuj funkcje acquire, tak by korzystala z algorytmu BEB
@@ -42,22 +38,27 @@ Philosopher.prototype.startNaive = function(count) {
         f2 = this.f2,
         id = this.id;
 
-    //for(var i=0; i<count; i++){
-        forks[f1].acquire(function(){
-            forks[f2].acquire(function(){
-                var max= 10;
-                var eatingTime = Math.ceil(Math.random()*max);
-                console.log("Philosoph "+ id + " eats for " + eatingTime + " second");
-                setTimeout(function(){
-                    console.log("Philosoph "+ id + " finished eating");
-                    forks[f1].release();
-                    forks[f2].release();
-                },eatingTime*1000);
-            });
-        }
-        );
+    
         
-    //}
+    for(var i=0; i<count; i++){
+        var val = Math.ceil(Math.random()*10);
+        setTimeout(()=>{
+            forks[f1].acquire(1000, function(){
+                console.log("Philosopher "+ id + " raise " + f1);
+                setTimeout(()=>forks[f2].acquire(1000, function(){
+                    console.log("Philosopher "+id + " raise "+ f2);
+                    setTimeout(function(){
+                        console.log("Philosopher "+ id+ " eated "+ val +" seconds");
+                        forks[f1].release;
+                        forks[f2].release;
+                    }, val*1000)
+                }), 1000)
+            })
+        },1000);
+    }
+    
+        
+    
     
     // zaimplementuj rozwiazanie naiwne
     // kazdy filozof powinien 'count' razy wykonywac cykl
@@ -98,12 +99,12 @@ for (var i = 0; i < N; i++) {
     philosophers.push(new Philosopher(i, forks));
 }
 
-//for (var i = 0; i < N; i++) {
-   // philosophers[i].startNaive(10);
-//}
-console.log(philosophers[2].forks[philosophers[2].f2] == philosophers[3].forks[philosophers[3].f1]);
-philosophers[2].forks[philosophers[2].f2].acquire(
-    1000, philosophers[3].forks[philosophers[3].f1].acquire(5000, function(){})
-);
+for (var i = 0; i < N; i++) {
+    philosophers[i].startNaive(10);
+}
+//console.log(philosophers[2].forks[philosophers[2].f2] == philosophers[3].forks[philosophers[3].f1]);
+//philosophers[2].forks[philosophers[2].f2].acquire(
+//    1000, philosophers[3].forks[philosophers[3].f1].acquire(5000, function(){})
+//);
 
-console.log(philosophers[2].forks[philosophers[2].f2] == philosophers[3].forks[philosophers[3].f1]);
+//console.log(philosophers[2].forks[philosophers[2].f2] == philosophers[3].forks[philosophers[3].f1]);
