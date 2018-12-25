@@ -49,8 +49,8 @@ Philosopher.prototype.startNaive = function(count) {
                     console.log("Philosopher "+id + " raise "+ f2);
                     setTimeout(function(){
                         console.log("Philosopher "+ id+ " eated "+ val +" seconds");
-                        forks[f1].release;
-                        forks[f2].release;
+                        forks[f1].release();
+                        forks[f2].release();
                     }, val*1000)
                 }), 1000)
             })
@@ -67,9 +67,34 @@ Philosopher.prototype.startNaive = function(count) {
 
 Philosopher.prototype.startAsym = function(count) {
     var forks = this.forks,
-        f1 = this.f1,
-        f2 = this.f2,
-        id = this.id;
+        id = this.id,
+        f1, f2;
+    
+
+    if(id%2==0){
+        f1=this.f2;
+        f2=this.f1;
+    } else {
+        f1=this.f1;
+        f2=this.f2;
+    }
+        
+    for(var i=0; i<count; i++){
+        var val = Math.ceil(Math.random()*10);
+        setTimeout(()=>{
+            forks[f1].acquire(1000, function(){
+                console.log("Philosopher "+ id + " raise " + f1);
+                setTimeout(()=>forks[f2].acquire(1000, function(){
+                    console.log("Philosopher "+id +" raise "+ f2);
+                    setTimeout(function(){
+                        console.log("Philosopher "+ id+ " eated "+ val +" seconds");
+                        forks[f1].release();
+                        forks[f2].release();
+                    }, val*1000)
+                }), 1000)
+            })
+        },1000);
+    }
     
     // zaimplementuj rozwiazanie asymetryczne
     // kazdy filozof powinien 'count' razy wykonywac cykl
@@ -100,11 +125,6 @@ for (var i = 0; i < N; i++) {
 }
 
 for (var i = 0; i < N; i++) {
-    philosophers[i].startNaive(10);
+    //philosophers[i].startNaive(10);
+    philosophers[i].startAsym(2);
 }
-//console.log(philosophers[2].forks[philosophers[2].f2] == philosophers[3].forks[philosophers[3].f1]);
-//philosophers[2].forks[philosophers[2].f2].acquire(
-//    1000, philosophers[3].forks[philosophers[3].f1].acquire(5000, function(){})
-//);
-
-//console.log(philosophers[2].forks[philosophers[2].f2] == philosophers[3].forks[philosophers[3].f1]);
