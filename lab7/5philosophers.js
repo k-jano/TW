@@ -89,7 +89,9 @@ Philosopher.prototype.startAsym = function (count) {
         f2 = this.f2;
     }
 
+    /*
     for (var i = 0; i < count; i++) {
+        console.log("On start");
         var val = Math.ceil(Math.random() * 10);
         setTimeout(() => {
             forks[f1].acquire(1000, function () {
@@ -105,6 +107,33 @@ Philosopher.prototype.startAsym = function (count) {
             })
         }, 1000);
     }
+    */
+    function task(cb){
+        console.log("On start");
+        var val = Math.ceil(Math.random() * 10);
+        setTimeout(() => {
+            forks[f1].acquire(1000, function () {
+                console.log("Philosopher " + id + " raise " + f1);
+                setTimeout(() => forks[f2].acquire(1000, function () {
+                    console.log("Philosopher " + id + " raise " + f2);
+                    setTimeout(function () {
+                        console.log("Philosopher " + id + " eated " + val + " seconds");
+                        forks[f1].release();
+                        forks[f2].release();
+                        cb();
+                    }, val * 1000)
+                }), 1000)
+            })
+        }, 1000);
+    }
+
+    function loop(count){
+        task(function(){
+            if(count>1) loop(count-1)
+        })
+    }
+
+    loop(count);
 
     // zaimplementuj rozwiazanie asymetryczne
     // kazdy filozof powinien 'count' razy wykonywac cykl
@@ -118,6 +147,7 @@ Philosopher.prototype.startConductor = function (count) {
         id = this.id;
 
 
+    /*
     for (var i = 0; i < count; i++) {
         var val = Math.ceil(Math.random() * 10);
         setTimeout(()=>{
@@ -137,6 +167,37 @@ Philosopher.prototype.startConductor = function (count) {
             }); 
         },1000);
     }
+    */
+   function task(cb){
+       console.log("On start");
+        var val = Math.ceil(Math.random() * 10);
+        setTimeout(()=>{
+            conductorAcquire(1000, function(){
+                setTimeout(()=>forks[f1].acquire(1000, function () {
+                    console.log("Philosopher " + id + " raise " + f1);
+                    setTimeout(() => forks[f2].acquire(1000, function () {
+                        console.log("Philosopher " + id + " raise " + f2);
+                        setTimeout(function () {
+                            console.log("Philosopher " + id + " eated " + val + " seconds");
+                            forks[f1].release();
+                            forks[f2].release();
+                            Conductor++;
+                            cb();
+                        }, val * 1000)
+                    }), 1000)
+                }))
+            }); 
+        },1000);
+   }
+
+
+    function loop(count){
+        task(function(){
+            if(count>1) loop(count-1)
+        })
+    }
+
+    loop(count);
 
     // zaimplementuj rozwiazanie z kelnerem
     // kazdy filozof powinien 'count' razy wykonywac cykl
